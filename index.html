@@ -1,15 +1,170 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dalia Naturalista</title>
-  <!-- Cargando la librería p5.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dalia Naturalista</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turtle.js/1.0.1/turtle.min.js"></script>
+    <style>
+        body {
+            background-color: #101010;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+            color: white;
+            font-family: Verdana, sans-serif;
+        }
+        canvas {
+            margin: 20px 0;
+        }
+        .mensaje {
+            text-align: center;
+            max-width: 600px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
-  <!-- Este script es donde va el código JavaScript -->
-  <script src="sketch.js"></script>
+    <div class="mensaje">
+        Feliz Día de la Madre. Gracias por tu amor incondicional, tu fuerza silenciosa y tu corazón inmenso. Eres la raíz que sostiene, la flor que embellece y el sol que guía. Que Dios te bendiga siempre.
+    </div>
+    <canvas id="florCanvas" width="800" height="800"></canvas>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('florCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Centrar el lienzo
+            canvas.style.display = 'block';
+            canvas.style.margin = '0 auto';
+            
+            // Configuración de gráficos de tortuga
+            const t = new Turtle(ctx);
+            t.hide();
+            t.speed(0);
+            
+            // Colores realistas en tonos lila/morado
+            const colores = ["#BAA0DE", "#C7A8EA", "#D9B8F1", "#EAD3FA", "#F3E6FD"];
+            
+            // Función para pétalo alargado
+            function petaloAlargado(largo, ancho) {
+                t.beginPath();
+                t.circle(largo, 60);
+                t.left(120);
+                t.circle(largo, 60);
+                t.closePath();
+                t.fill();
+            }
+            
+            // Función para dibujar capas de pétalos
+            function dibujarPetales() {
+                for (let capa = 0; capa < colores.length; capa++) {
+                    t.fillStyle = colores[capa];
+                    t.strokeStyle = colores[capa];
+                    const numPetales = 16 + capa * 2;
+                    const radio = 40 + capa * 15;
+                    
+                    for (let i = 0; i < numPetales; i++) {
+                        t.penUp();
+                        t.goto(0, 0);
+                        t.setHeading(i * (360 / numPetales));
+                        t.forward(radio);
+                        t.penDown();
+                        petaloAlargado(radio, 60);
+                    }
+                }
+            }
+            
+            // Centro de la flor (más grande y mejor posicionado)
+            function centroFlor() {
+                // Círculo amarillo principal (más grande)
+                t.penUp();
+                t.goto(27, 12);
+                t.penDown();
+                t.fillStyle = "#FFD700"; // Amarillo dorado
+                t.strokeStyle = "#FFD700";
+                t.beginPath();
+                t.circle(28);
+                t.closePath();
+                t.fill();
+                
+                // Semilla interna (café)
+                t.penUp();
+                t.goto(20, 9);
+                t.penDown();
+                t.fillStyle = "#5C2E00";
+                t.strokeStyle = "#5C2E00";
+                t.beginPath();
+                t.circle(20);
+                t.closePath();
+                t.fill();
+            }
+            
+            // Rama natural que sale del borde de los pétalos
+            function rama() {
+                t.penUp();
+                t.goto(5, -22); // Comienza desde el borde inferior del centro
+                t.setHeading(-100);
+                t.penDown();
+                t.strokeStyle = "#4E2E28";
+                t.fillStyle = "#4E2E28";
+                t.lineWidth = 8; // Un poco más gruesa
+                t.forward(100); // Aumenta la distancia para hacerla más larga
+                
+                // Hacemos la rama más orgánica con curvas
+                for (let i = 0; i < 2; i++) {
+                    t.forward(40);
+                    t.left(10);
+                }
+                t.forward(60);
+                t.right(10);
+                t.forward(60);
+            }
+            
+            // Hojas laterales curvas mejor posicionadas
+            function hoja(x, y, direccion, tamaño = 1) {
+                t.penUp();
+                t.goto(x, y);
+                t.setHeading(direccion);
+                t.penDown();
+                t.fillStyle = "#2F873E";
+                t.strokeStyle = "#2F873E";
+                t.beginPath();
+                
+                // Hacemos la hoja con forma de pétalo
+                t.circle(50 * tamaño, 60); // Parte superior de la hoja
+                t.left(120);
+                t.circle(50 * tamaño, 60); // Parte inferior de la hoja
+                
+                t.closePath();
+                t.fill();
+                
+                // Dibujar la pequeña raíz dentro de la hoja
+                t.penUp();
+                t.goto(x, y); // Ir al centro de la base de la hoja
+                t.setHeading(direccion + 180); // Apuntar hacia abajo
+                t.penDown();
+                t.strokeStyle = "#8B4513"; // Color marrón para la raíz
+                t.fillStyle = "#8B4513";
+                t.lineWidth = 2;
+                t.forward(10 * tamaño); // Dibuja la raíz pequeña
+                t.backward(10 * tamaño); // Regresa al punto de inicio
+            }
+            
+            // Dibujar todo
+            rama();
+            // Hojas mejor posicionadas (una más grande que la otra)
+            hoja(-34, -210, 220, 1.2); // Hoja izquierda más grande
+            hoja(-10, -210, 300, 1.1); // Hoja derecha más pequeña
+            centroFlor();
+            dibujarPetales();
+        });
+    </script>
 </body>
 </html>
-
